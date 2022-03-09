@@ -3,7 +3,7 @@ mod resources;
 mod state;
 mod twitter;
 
-use crate::{resources::get_metric, state::State, twitter::TwitterClient};
+use crate::{resources::get_metrics, state::State, twitter::TwitterClient};
 use actix_web::{web::Data, App, HttpServer};
 use anyhow::Result;
 
@@ -31,7 +31,7 @@ async fn main() -> Result<()> {
         prefix,
     });
 
-    let _ = HttpServer::new(move || App::new().app_data(state.clone()).service(get_metric))
+    let _ = HttpServer::new(move || App::new().app_data(state.clone()).service(get_metrics))
         .bind((host_address.as_str(), host_port))?
         .run()
         .await?;
