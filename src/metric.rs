@@ -33,15 +33,17 @@ impl From<UserResponse> for AccountStatus {
     }
 }
 
-pub async fn get_metric(client: &TwitterClient, usernames: &Vec<String>, prefix: &str) -> String {
+pub async fn get_metric(client: &TwitterClient, usernames: &Vec<String>, _prefix: &str) -> String {
     let mut response = String::with_capacity(usernames.len() * 12);
+    response += "# HELP twitter twitter_account_status\n";
+    response += "# TYPE twitter summary\n";
     for username in usernames {
         let status: AccountStatus = client
             .get_user(username)
             .await
             .map(From::from)
             .unwrap_or_default();
-        response += &format!("{}{} {:?}\n", prefix, username, status as u8);
+        response += &format!("twitter{{account=\"{}\"}} {:?}\n", username, status as u8);
     }
     response
 }
