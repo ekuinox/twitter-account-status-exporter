@@ -3,7 +3,7 @@ mod resources;
 mod state;
 mod twitter;
 
-use crate::{state::State, twitter::TwitterClient, resources::get_metric};
+use crate::{resources::get_metric, state::State, twitter::TwitterClient};
 use actix_web::{web::Data, App, HttpServer};
 use anyhow::Result;
 
@@ -13,6 +13,7 @@ async fn main() -> Result<()> {
 
     let host_address = std::env::var("HOST_ADDRESS")?;
     let host_port = std::env::var("HOST_PORT")?.parse::<u16>()?;
+    let prefix = std::env::var("METRIC_PREFIX").unwrap_or_default();
     let api_key = std::env::var("TWITTER_API_KEY")?;
     let api_secret = std::env::var("TWITTER_API_SECRET")?;
     let usernames = std::env::var("TWITTER_USERNAMES")?;
@@ -27,17 +28,13 @@ async fn main() -> Result<()> {
     let state = Data::new(State {
         client,
         usernames,
-        prefix: "".into(),
+        prefix,
     });
 
-    let _ = HttpServer::new(move || {
-        App::new()
-            .app_data(state.clone())
-            .service(get_metric)
-    })
-    .bind((host_address.as_str(), host_port))?
-    .run()
-    .await?;
+    let _ = HttpServer::new(move || App::new().app_data(state.clone()).service(get_metric))
+        .bind((host_address.as_str(), host_port))?
+        .run()
+        .await?;
 
     Ok(())
 }
