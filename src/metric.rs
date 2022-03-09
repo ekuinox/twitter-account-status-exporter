@@ -1,6 +1,7 @@
 use crate::twitter::{TwitterClient, UserResponse, UserResponseErrorTitle};
 
 #[derive(Debug)]
+#[repr(u8)]
 enum AccountStatus {
     Ok,
     Suspended,
@@ -40,7 +41,7 @@ pub async fn get_metric(client: &TwitterClient, usernames: &Vec<String>, prefix:
             .await
             .map(From::from)
             .unwrap_or_default();
-        response += &format!("{}{} {:?}\n", prefix, username, status);
+        response += &format!("{}{} {:?}\n", prefix, username, status as u8);
     }
     response
 }
