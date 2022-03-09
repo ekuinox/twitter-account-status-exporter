@@ -68,6 +68,8 @@ async fn metric(state: Data<State>) -> impl Responder {
 async fn main() -> Result<()> {
     let _ = dotenv::dotenv().ok();
 
+    let host_address = std::env::var("HOST_ADDRESS")?;
+    let host_port = std::env::var("HOST_PORT")?.parse::<u16>()?;
     let api_key = std::env::var("TWITTER_API_KEY")?;
     let api_secret = std::env::var("TWITTER_API_SECRET")?;
     let usernames = std::env::var("TWITTER_USERNAMES")?;
@@ -90,7 +92,7 @@ async fn main() -> Result<()> {
             .app_data(state.clone())
             .service(web::resource("/metric").to(metric))
     })
-    .bind(("0.0.0.0", 8000))?
+    .bind((host_address.as_str(), host_port))?
     .run()
     .await?;
 
