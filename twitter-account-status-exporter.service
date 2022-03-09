@@ -1,0 +1,12 @@
+[Unit]
+Description=twitter-account-status-exporter daemon
+
+[Service]
+Type=simple
+RestartSec=5s
+Restart=always
+EnvironmentFile=/etc/sysconfig/twitter-account-status-exporter.conf
+ExecStart=/usr/bin/twitter-account-status-exporter
+
+[Install]
+WantedBy=multi-user.target
