@@ -33,8 +33,8 @@ pub enum UserResponseErrorTitle {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UserErrorResponse {
-    value: String,
-    title: UserResponseErrorTitle,
+    pub value: String,
+    pub title: UserResponseErrorTitle,
 }
 
 /// `2/users/by/username/:username` のレスポンス
