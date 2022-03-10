@@ -36,7 +36,7 @@ impl From<UserResponse> for AccountStatus {
 }
 
 #[cached(time = 60)]
-pub async fn get_metric(client: TwitterClient, usernames: Vec<String>, _prefix: String) -> String {
+pub async fn get_metric(client: TwitterClient, usernames: Vec<String>) -> String {
     let mut response = String::with_capacity(usernames.len() * 12);
     let time = Utc::now().timestamp_millis();
     response += "# HELP twitter twitter_account_status\n";

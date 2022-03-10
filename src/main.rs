@@ -13,7 +13,6 @@ async fn main() -> Result<()> {
 
     let host_address = std::env::var("HOST_ADDRESS")?;
     let host_port = std::env::var("HOST_PORT")?.parse::<u16>()?;
-    let prefix = std::env::var("METRIC_PREFIX").unwrap_or_default();
     let api_key = std::env::var("TWITTER_API_KEY")?;
     let api_secret = std::env::var("TWITTER_API_SECRET")?;
     let usernames = std::env::var("TWITTER_USERNAMES")?;
@@ -28,7 +27,6 @@ async fn main() -> Result<()> {
     let state = Data::new(State {
         client,
         usernames,
-        prefix,
     });
 
     let _ = HttpServer::new(move || App::new().app_data(state.clone()).service(get_metrics))

@@ -4,5 +4,4 @@ use crate::twitter::TwitterClient;
 pub struct State {
     pub client: TwitterClient,
     pub usernames: Vec<String>,
-    pub prefix: String,
 }
