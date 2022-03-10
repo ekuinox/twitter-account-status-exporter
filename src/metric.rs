@@ -1,4 +1,5 @@
 use crate::twitter::{TwitterClient, UserResponse, UserResponseErrorTitle};
+use cached::proc_macro::cached;
 
 #[derive(Debug)]
 #[repr(u8)]
@@ -33,17 +34,20 @@ impl From<UserResponse> for AccountStatus {
     }
 }
 
-pub async fn get_metric(client: &TwitterClient, usernames: &Vec<String>, _prefix: &str) -> String {
+#[cached(time=60)]
+pub async fn get_metric(client: TwitterClient, usernames: Vec<String>, _prefix: String) -> String {
     let mut response = String::with_capacity(usernames.len() * 12);
+    let time = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH);
+    let time = time.map(|time| time.as_secs()).unwrap_or_default();
     response += "# HELP twitter twitter_account_status\n";
     response += "# TYPE twitter summary\n";
     for username in usernames {
         let status: AccountStatus = client
-            .get_user(username)
+            .get_user(&username)
             .await
             .map(From::from)
             .unwrap_or_default();
-        response += &format!("twitter{{account=\"{}\"}} {:?}\n", username, status as u8);
+        response += &format!("twitter{{account=\"{}\"}} {:?} {}\n", username, status as u8, time);
     }
     response
 }
