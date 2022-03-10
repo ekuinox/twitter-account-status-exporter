@@ -1648,6 +1648,7 @@ dependencies = [
  "chrono",
  "dotenv",
  "envy",
+ "futures",
  "prometheus-client",
  "rand",
  "reqwest",
